@@ -16,12 +16,11 @@ func LoadConfig() {
 	// Read the config file
 	err := viper.ReadInConfig()
 	if err != nil {
-		panic(fmt.Errorf("Fail to read configuration file %w \n", err)) //if error in reading the config file, STOP APP
+		panic(fmt.Errorf("fail to read configuration file %w ", err)) //if error in reading the config file, STOP APP
 	}
 	// Read configuration -> simple config
 	// fmt.Println("Server Port: ", viper.GetInt("server.host"))             // server.port = 8080 (trong file local.yaml)
 	// fmt.Println("Server security: ", viper.GetString("security.jwt.key")) // server.port = 8080 (trong file local.yaml)
-
 	// Read onfiguration -> complex config
 	err = viper.Unmarshal(&global.Config) // Unmarshal sẽ đọc dữ liệu từ file config bên trên (local.yaml) và gán vào biến global.Config
 	//

@@ -1,10 +1,12 @@
 package setting
 
+// setting package is used to define struct syntax of config file
 type Config struct {
 	Server ServerSetting `mapstructure:"server"`
 	Logger LoggerSetting `mapstructure:"logger"`
 	Mysql  MySqlSetting  `mapstructure:"mysql"`
 	Redis  RedisSetting  `mapstructure:"redis"`
+	JWT    JWTSetting    `mapstructure:"jwt"`
 }
 
 type ServerSetting struct {
@@ -36,4 +38,11 @@ type RedisSetting struct {
 	Port     int    `mapstructure:"port"`
 	Password string `mapstructure:"password"`
 	Database int    `mapstructure:"database"`
+}
+
+// JWT Settings
+type JWTSetting struct {
+	TOKEN_HOUR_LIFESPAN uint   `mapstructure:"TOKEN_HOUR_LIFESPAN"`
+	API_SECRET_KEY      string `mapstructure:"API_SECRET_KEY"`
+	JWT_EXPIRATION      string `mapstructure:"JWT_EXPIRATION"`
 }

@@ -1,19 +1,35 @@
 version: '3.9'
 
 services:
+  # crm.show.com:
+  #   container_name: go_backend_crm_shopdev
+  #   build:
+  #     context: . # use the Dockerfile in the current directory
+  #     dockerfile: Dockerfile 
+  #   ports: 
+  #     - "8008:8008"
+  #   depends_on:
+  #     - mysql
+  #     - redis
+  #   restart: always
+  #   networks:
+  #     - app-network
+
   mysql:
     image: mysql:8.0
     container_name: mysql_container
     environment:
       MYSQL_ROOT_PASSWORD: root1234
       MYSQL_DATABASE: shopdevgo
-      MYSQL_USER: root
+      MYSQL_USER: root1
       MYSQL_PASSWORD: root1234
     ports:
       - "33306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
       - ./init:/docker-entrypoint-initdb.d
+    networks:
+      - app-network
 
   redis:
     image: redis:7.0
@@ -22,7 +38,39 @@ services:
       - "6381:6379"
     volumes:
       - redis_data:/data
+    networks:
+      - app-network
+  
+  kafka:
+    image: apache/kafka:latest
+    ports:
+      - 9092:9092
+    links:
+      - zookeeper
+    environment:
+      - ZOOKEEPER_CONNECT=zookeeper:2181
 
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    container_name: demo_kafka-ui
+    environment:
+      - KAFKA_CLUSTERS_0_NAME=local
+      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=demo_kafka:9092
+    ports:
+      - 9089:8080
+    links:
+      - kafka
+
+  zookeeper:
+    image: quay.io/debezium/zookeeper:2.7
+    container_name: member_zookeeper_container
+    ports:
+      - 2181:2181
+      - 2888:2888
+      - 3888:3888
 volumes:
   mysql_data:
   redis_data:
+networks:
+  app-network:
+    driver: bridge

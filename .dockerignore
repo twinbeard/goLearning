@@ -1,0 +1,4 @@
+# ignore git file
+.git
+.md
+.docs

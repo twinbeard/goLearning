@@ -1,0 +1,10 @@
+@baseURL = http://localhost:8008/v1/2024
+
+POST {{baseURL}}/user/register
+Content-Type: application/json
+
+{
+    "verify_key": "truongvu.work@gmail.com",
+    "verify_purpose": "TEST_USER",
+    "verify_type": 1
+}

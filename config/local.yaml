@@ -1,5 +1,5 @@
 server:
-  port: 8080
+  port: 8008
   mode: "dev"
 logger:
   log_level: debug
@@ -8,24 +8,23 @@ logger:
   max_backups: 3
   max_age: 28
   compress: true
+# Nhớ check port của mysql và redis cho khớp với docker-compose nhé
+# host của mysql và redis là tên container trong docker-compose.yml khi production nhưng đồng thời mình phải tạo net work riêng cho nó nhé để các container có thể giao tiếp
 mysql:
-  host: 127.0.0.1
-  port: 33306
-  username: root
+  host: localhost #mysql_container -> Production  # 127.0.0.1(localhost) -> Development
+  port: 33306 # 3306 -> port coi bên docker-compose nhé
+  username: root1
   password: root1234
   dbname: shopdevgo
   maxIdleConns: 10
   maxOpenConns: 100
   connMaxLifetime: 3600
-logger:
-  log_level: debug
-  file_log_name: "./storages/logs/dev.001.log"
-  max_size: 500
-  max_backups: 3
-  max_age: 28
-  compress: true
 redis:
-  host: 127.0.0.1
-  port: 6381
+  host: localhost #redis_container #127.0.0.1
+  port: 6379 #6381
   password:
   database: 0
+jwt:
+  TOKEN_HOUR_LIFESPAN: 1
+  JWT_EXPIRATION: 1h
+  API_SECRET: "xxx.yyy.zzz"
