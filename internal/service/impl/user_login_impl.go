@@ -55,22 +55,59 @@ func (s *sUserLogin) SetupTwoFactorAuth(ctx context.Context, in *models.SetupTwo
 	}
 	//2.If user has not enabled two-factor authentication then continue to setup new type of two-factor authentication such as email or mobile
 	err = s.r.EnableTwoFactorTypeEmail(ctx, database.EnableTwoFactorTypeEmailParams{
-		UserID:            in.UserId,
-		TwoFactorAuthType: database.PreGoAccUserTwoFactor9999TwoFactorAuthTypeSMS,
-		TwoFactorEmail:    sql.NullString{String: in.TwoFactorEmail, Valid: true},
+		UserID:            in.UserId,                                                // User ID
+		TwoFactorAuthType: database.PreGoAccUserTwoFactor9999TwoFactorAuthTypeEMAIL, // Type of two-factor authentication
+		TwoFactorEmail:    sql.NullString{String: in.TwoFactorEmail, Valid: true},   // Here is email or mobile for two-factor authentication
 	})
 	if err != nil {
 		return response.ErrCodeTwoFactorAuthSetupFailed, fmt.Errorf("two-factor authentication has already enabled")
 	}
 	//3. If user enable two-factor authentication successfully then send OTP to user in.TwoFactorEmail
 	keyUserTwoFactor := crypto.GetHash("2fa" + strconv.Itoa(int(in.UserId)))
-	go global.Rdb.Set(ctx, keyUserTwoFactor, "123456", time.Duration(consts.TIME_OTP_REGISTER)*time.Minute).Err()
+	log.Println("keyUserTwoFactor: SETUP", keyUserTwoFactor)
+	go global.Rdb.Set(ctx, keyUserTwoFactor, "123456", time.Duration(consts.TIME_2FA_OTP_REGISTER)*time.Minute).Err()
 
 	return response.ErrCodeSuccess, nil
 }
 
 // Verify Two Factor Authentication
 func (s *sUserLogin) VerifyTwoFactorAuth(ctx context.Context, in *models.TwoFactorVerificationInput) (codeResult int, err error) {
+	// 1. Check database to see if user has enabled two-factor authentication
+	isTwoFactorAuth, err := s.r.IsTwoFactorEnabled(ctx, in.UserId)
+	if err != nil {
+		return response.ErrCodeTwoFactorAuthVerifyFailed, err
+	}
+	// 1.1 If yes, then return " two-factor authentication has already enabled"
+	if isTwoFactorAuth > 0 {
+		return response.ErrCodeTwoFactorAuthVerifyFailed, fmt.Errorf("two-factor authentication has already enabled ")
+	}
+	// 2. Check if OTP for "two-factor authentication" is available in redis
+	keyUserTwoFactor := crypto.GetHash("2fa" + strconv.Itoa(int(in.UserId))) // hash(2fa+userId)
+	log.Println("keyUserTwoFactor: VERIFY", keyUserTwoFactor)
+	otpVerifyAuth, err := global.Rdb.Get(ctx, keyUserTwoFactor).Result()
+	if err == redis.Nil {
+		return response.ErrCodeTwoFactorAuthVerifyFailed, fmt.Errorf("key %s does not exist", keyUserTwoFactor)
+	} else if err != nil {
+		return response.ErrCodeTwoFactorAuthVerifyFailed, err
+	}
+	// 3. If OTP is available in redis then check if this OTP is match with user OTP input
+	if otpVerifyAuth != in.TwoFactorCodeString {
+		return response.ErrCodeTwoFactorAuthVerifyFailed, fmt.Errorf("OTP code does not match")
+	}
+	// 4. If OTP is matched then update two-factor authentication status in mysql
+	err = s.r.UpdateTwoFactorStatusVerification(ctx, database.UpdateTwoFactorStatusVerificationParams{
+		UserID:            in.UserId,
+		TwoFactorAuthType: database.PreGoAccUserTwoFactor9999TwoFactorAuthTypeEMAIL,
+	})
+	if err != nil {
+		return response.ErrCodeTwoFactorAuthVerifyFailed, err
+	}
+	// 5. Remove OTP => Nguyên tắc sử dụng OTP dù sai hay đúng thì cũng phải xoá
+	_, err = global.Rdb.Del(ctx, keyUserTwoFactor).Result()
+	if err != nil {
+		return response.ErrCodeTwoFactorAuthVerifyFailed, err
+	}
+
 	return 200, nil
 }
 
@@ -91,15 +128,39 @@ func (s *sUserLogin) Login(ctx context.Context, in *models.LoginInput) (codeResu
 		return response.ErrCodeAuthFailed, out, fmt.Errorf("password does not match")
 	}
 	// 2. Check two-factor authentication
-	// 2.1 Check if user has enabled two-factor authentication
+	// 2.1 Check if user has enabled two-factor authentication then inform user that someone is trying to login to your account
+	isTwoFactorEnable, err := s.r.IsTwoFactorEnabled(ctx, uint32(userBase.UserID))
+	if err != nil {
+		return response.ErrCodeAuthFailed, out, err
+	}
+	if isTwoFactorEnable > 0 {
+		// 2.2 If user has enabled two-factor authentication then send OTP to user email (in.TwoFactorEmail)
+		// 2.2.1 Save OTP to redis
+		keyUserLoginTwoFactor := crypto.GetHash("2fa:otp" + strconv.Itoa(int(userBase.UserID)))
+		err := global.Rdb.Set(ctx, keyUserLoginTwoFactor, "111111", time.Duration(consts.TIME_2FA_OTP_REGISTER)*time.Minute).Err()
+		if err != nil {
+			return response.ErrCodeAuthFailed, out, fmt.Errorf("set OTP redis failed")
+		}
+		// 2.2.2 Get email used for two-factor authentication
+		infoUserTwoFactor, err := s.r.GetTwoFactorMethodByIDAndType(ctx, database.GetTwoFactorMethodByIDAndTypeParams{
+			UserID:            uint32(userBase.UserID),
+			TwoFactorAuthType: database.PreGoAccUserTwoFactor9999TwoFactorAuthTypeEMAIL,
+		})
+		if err != nil {
+			return response.ErrCodeAuthFailed, out, fmt.Errorf("get two-factor method failed")
+		}
+		// 2.2.2 Send OTP to user email
+		log.Println("Send OTP to user email::", infoUserTwoFactor.TwoFactorEmail)
+		go sendto.SendTextEmailOtp([]string{infoUserTwoFactor.TwoFactorEmail.String}, consts.HOST_EMAIL, "111111")
+		out.Message = "Send OTP 2FA to Email, Please check your email"
+		return response.ErrCodeSuccess, out, nil
+	}
 
-	//
-
-	// 3. Generate access token and refresh token
+	// 3. Save login info to mysql (account,pw, ip, time)
 	go s.r.LoginUserBase(ctx, database.LoginUserBaseParams{
-		UserLoginIp:  sql.NullString{String: "127.0.0.1", Valid: true},
-		UserAccount:  in.UserAccount,
-		UserPassword: in.UserPassword, // Không cần passworrk
+		UserLoginIp:  sql.NullString{String: "127.0.0.1", Valid: true}, // IP của user
+		UserAccount:  in.UserAccount,                                   // Email của user
+		UserPassword: in.UserPassword,                                  // Không cần password
 	}) // Đây là goroutine dùng để lưu thông tin login vào bảng login_user_base trong mysql ở background nên không cần quan tâm đến kết quả trả về
 	// Chính vì thế chúng tao không cần wait goroutine
 
@@ -115,14 +176,14 @@ func (s *sUserLogin) Login(ctx context.Context, in *models.LoginInput) (codeResu
 	// convert to json
 	infoUserJson, err := json.Marshal(infoUser)
 	if err != nil {
-		return response.ErrCodeAuthFailed, out, fmt.Errorf("Error convert to json: %v", err)
+		return response.ErrCodeAuthFailed, out, fmt.Errorf("error convert to json: %v", err)
 	}
 	// 7. Save infoUserJson to redis with key = subToken
-	err = global.Rdb.SetEx(ctx, subToken, infoUserJson, time.Duration(consts.TIME_OTP_REGISTER)*time.Minute).Err() // THời gian hết hạn = time của token
+	err = global.Rdb.SetEx(ctx, subToken, infoUserJson, time.Duration(consts.TIME_2FA_OTP_REGISTER)*time.Minute).Err() // THời gian hết hạn = time của token
 	if err != nil {
-		return response.ErrCodeAuthFailed, out, fmt.Errorf("Error convert to json: %v", err)
+		return response.ErrCodeAuthFailed, out, fmt.Errorf("error convert to json: %v", err)
 	}
-	// 8. Create JWT token
+	// 8. Create JWT token => JWT token này sẽ được gửi về cho client và client sẽ lưu token này vào local storage để sử dụng trong các request tiếp theo (Authorization: Bearer <JWTtoken>)
 	out.Token, err = auth.CreateToken(subToken)
 	if err != nil {
 		return
@@ -206,7 +267,9 @@ func (s *sUserLogin) Register(ctx context.Context, in *models.RegisterInput) (co
 }
 
 func (s *sUserLogin) VerifyOTP(ctx context.Context, in *models.VerifyInput) (out models.VerifyOTPOutput, err error) {
+
 	// 1. Check if hash key exists in redis or not
+	fmt.Println("Verify OTP")
 	hashKey := crypto.GetHash(strings.ToLower(in.VerifyKey))
 	fmt.Printf("Hash key is :::%s\n", hashKey)
 	optFound, err := global.Rdb.Get(ctx, utils.GetUserKey(hashKey)).Result()
@@ -219,11 +282,11 @@ func (s *sUserLogin) VerifyOTP(ctx context.Context, in *models.VerifyInput) (out
 		return out, fmt.Errorf("OTP code is not correct")
 	}
 	// 2. Check if hashkey of Email exists in mysql
-	infoOTP, err := s.r.GetInfoOTP(ctx, in.VerifyKey)
+	infoOTP, err := s.r.GetInfoOTP(ctx, hashKey)
 	if err != nil {
 		return out, err
 	}
-	// if hashkey of email exist in mysql then update status of email
+	// if hashkey of email exist in mysql then update status of email as VERIFIED (1)
 	err = s.r.UpdateUserVerificationStatus(ctx, hashKey) // is_verified = 1
 	if err != nil {
 		return out, err
@@ -258,7 +321,7 @@ func (s *sUserLogin) UpdatePasswordRegister(ctx context.Context, token string, p
 
 	userBase.UserPassword = crypto.HashPassword(password, userSalt)
 
-	// add userBase to user_base table
+	// add user information (useBase) to user_base table => After OTP Verifcation and update password, chúng ta thêm thông tin user vào bản user_base
 	newUserBase, err := s.r.AddUserBase(ctx, userBase)
 	if err != nil {
 		return response.ErrCodeUserOtpNotExists, err

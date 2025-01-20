@@ -283,3 +283,52 @@
 {"level":"INFO","time":"2025-01-19T10:02:45.111+0700","caller":"initialize/run.go:17","msg":"Config Log okay!!","OKIE DOKIE":"Sucess"}
 {"level":"INFO","time":"2025-01-19T10:02:45.113+0700","caller":"initialize/mySqlc.go:31","msg":"MySQL initialization successful","DB":"shopdevgo"}
 {"level":"INFO","time":"2025-01-19T10:02:45.122+0700","caller":"initialize/redis.go:48","msg":"value score is::","score":"100"}
+{"level":"INFO","time":"2025-01-20T14:16:51.549+0700","caller":"initialize/run.go:17","msg":"Config Log okay!!","OKIE DOKIE":"Sucess"}
+{"level":"INFO","time":"2025-01-20T14:16:51.550+0700","caller":"initialize/mySqlc.go:31","msg":"MySQL initialization successful","DB":"shopdevgo"}
+{"level":"INFO","time":"2025-01-20T14:16:51.562+0700","caller":"initialize/redis.go:48","msg":"value score is::","score":"100"}
+{"level":"INFO","time":"2025-01-20T14:31:16.601+0700","caller":"initialize/run.go:17","msg":"Config Log okay!!","OKIE DOKIE":"Sucess"}
+{"level":"INFO","time":"2025-01-20T14:31:16.603+0700","caller":"initialize/mySqlc.go:31","msg":"MySQL initialization successful","DB":"shopdevgo"}
+{"level":"INFO","time":"2025-01-20T14:31:16.609+0700","caller":"initialize/redis.go:48","msg":"value score is::","score":"100"}
+{"level":"ERROR","time":"2025-01-20T14:31:47.276+0700","caller":"account/login_controller.go:70","msg":"Error registering user OTP : ","error":"Error 1062 (23000): Duplicate entry 'tlttmtf@gmail.com' for key 'pre_go_acc_user_verify_9999.unique_verify_key'"}
+{"level":"INFO","time":"2025-01-20T14:33:21.541+0700","caller":"initialize/run.go:17","msg":"Config Log okay!!","OKIE DOKIE":"Sucess"}
+{"level":"INFO","time":"2025-01-20T14:33:21.542+0700","caller":"initialize/mySqlc.go:31","msg":"MySQL initialization successful","DB":"shopdevgo"}
+{"level":"INFO","time":"2025-01-20T14:33:21.545+0700","caller":"initialize/redis.go:48","msg":"value score is::","score":"100"}
+{"level":"INFO","time":"2025-01-20T14:58:18.022+0700","caller":"initialize/run.go:17","msg":"Config Log okay!!","OKIE DOKIE":"Sucess"}
+{"level":"INFO","time":"2025-01-20T14:58:18.022+0700","caller":"initialize/mySqlc.go:31","msg":"MySQL initialization successful","DB":"shopdevgo"}
+{"level":"INFO","time":"2025-01-20T14:58:18.136+0700","caller":"initialize/redis.go:48","msg":"value score is::","score":"100"}
+{"level":"INFO","time":"2025-01-20T15:03:14.110+0700","caller":"initialize/run.go:17","msg":"Config Log okay!!","OKIE DOKIE":"Sucess"}
+{"level":"INFO","time":"2025-01-20T15:03:14.110+0700","caller":"initialize/mySqlc.go:31","msg":"MySQL initialization successful","DB":"shopdevgo"}
+{"level":"INFO","time":"2025-01-20T15:03:14.125+0700","caller":"initialize/redis.go:48","msg":"value score is::","score":"100"}
+{"level":"INFO","time":"2025-01-20T15:04:38.269+0700","caller":"initialize/run.go:17","msg":"Config Log okay!!","OKIE DOKIE":"Sucess"}
+{"level":"INFO","time":"2025-01-20T15:04:38.269+0700","caller":"initialize/mySqlc.go:31","msg":"MySQL initialization successful","DB":"shopdevgo"}
+{"level":"INFO","time":"2025-01-20T15:04:38.273+0700","caller":"initialize/redis.go:48","msg":"value score is::","score":"100"}
+{"level":"INFO","time":"2025-01-20T15:48:45.780+0700","caller":"initialize/run.go:17","msg":"Config Log okay!!","OKIE DOKIE":"Sucess"}
+{"level":"INFO","time":"2025-01-20T15:48:45.781+0700","caller":"initialize/mySqlc.go:31","msg":"MySQL initialization successful","DB":"shopdevgo"}
+{"level":"INFO","time":"2025-01-20T15:48:45.790+0700","caller":"initialize/redis.go:48","msg":"value score is::","score":"100"}
+{"level":"INFO","time":"2025-01-20T16:29:31.564+0700","caller":"initialize/run.go:17","msg":"Config Log okay!!","OKIE DOKIE":"Sucess"}
+{"level":"INFO","time":"2025-01-20T16:29:31.565+0700","caller":"initialize/mySqlc.go:31","msg":"MySQL initialization successful","DB":"shopdevgo"}
+{"level":"INFO","time":"2025-01-20T16:29:31.571+0700","caller":"initialize/redis.go:48","msg":"value score is::","score":"100"}
+{"level":"INFO","time":"2025-01-20T16:33:16.218+0700","caller":"initialize/run.go:17","msg":"Config Log okay!!","OKIE DOKIE":"Sucess"}
+{"level":"INFO","time":"2025-01-20T16:33:16.219+0700","caller":"initialize/mySqlc.go:31","msg":"MySQL initialization successful","DB":"shopdevgo"}
+{"level":"INFO","time":"2025-01-20T16:33:16.223+0700","caller":"initialize/redis.go:48","msg":"value score is::","score":"100"}
+{"level":"INFO","time":"2025-01-20T16:40:03.063+0700","caller":"initialize/run.go:17","msg":"Config Log okay!!","OKIE DOKIE":"Sucess"}
+{"level":"INFO","time":"2025-01-20T16:40:03.063+0700","caller":"initialize/mySqlc.go:31","msg":"MySQL initialization successful","DB":"shopdevgo"}
+{"level":"INFO","time":"2025-01-20T16:40:03.067+0700","caller":"initialize/redis.go:48","msg":"value score is::","score":"100"}
+{"level":"INFO","time":"2025-01-20T16:44:06.773+0700","caller":"initialize/run.go:17","msg":"Config Log okay!!","OKIE DOKIE":"Sucess"}
+{"level":"INFO","time":"2025-01-20T16:44:06.773+0700","caller":"initialize/mySqlc.go:31","msg":"MySQL initialization successful","DB":"shopdevgo"}
+{"level":"INFO","time":"2025-01-20T16:44:06.776+0700","caller":"initialize/redis.go:48","msg":"value score is::","score":"100"}
+{"level":"INFO","time":"2025-01-20T16:51:48.705+0700","caller":"initialize/run.go:17","msg":"Config Log okay!!","OKIE DOKIE":"Sucess"}
+{"level":"INFO","time":"2025-01-20T16:51:48.706+0700","caller":"initialize/mySqlc.go:31","msg":"MySQL initialization successful","DB":"shopdevgo"}
+{"level":"INFO","time":"2025-01-20T16:51:48.779+0700","caller":"initialize/redis.go:48","msg":"value score is::","score":"100"}
+{"level":"INFO","time":"2025-01-20T16:58:58.599+0700","caller":"initialize/run.go:17","msg":"Config Log okay!!","OKIE DOKIE":"Sucess"}
+{"level":"INFO","time":"2025-01-20T16:58:58.599+0700","caller":"initialize/mySqlc.go:31","msg":"MySQL initialization successful","DB":"shopdevgo"}
+{"level":"INFO","time":"2025-01-20T16:58:58.608+0700","caller":"initialize/redis.go:48","msg":"value score is::","score":"100"}
+{"level":"INFO","time":"2025-01-20T17:01:04.155+0700","caller":"initialize/run.go:17","msg":"Config Log okay!!","OKIE DOKIE":"Sucess"}
+{"level":"INFO","time":"2025-01-20T17:01:04.156+0700","caller":"initialize/mySqlc.go:31","msg":"MySQL initialization successful","DB":"shopdevgo"}
+{"level":"INFO","time":"2025-01-20T17:01:04.159+0700","caller":"initialize/redis.go:48","msg":"value score is::","score":"100"}
+{"level":"INFO","time":"2025-01-20T17:05:11.781+0700","caller":"initialize/run.go:17","msg":"Config Log okay!!","OKIE DOKIE":"Sucess"}
+{"level":"INFO","time":"2025-01-20T17:05:11.782+0700","caller":"initialize/mySqlc.go:31","msg":"MySQL initialization successful","DB":"shopdevgo"}
+{"level":"INFO","time":"2025-01-20T17:05:11.787+0700","caller":"initialize/redis.go:48","msg":"value score is::","score":"100"}
+{"level":"INFO","time":"2025-01-20T17:42:32.880+0700","caller":"initialize/run.go:17","msg":"Config Log okay!!","OKIE DOKIE":"Sucess"}
+{"level":"INFO","time":"2025-01-20T17:42:32.882+0700","caller":"initialize/mySqlc.go:31","msg":"MySQL initialization successful","DB":"shopdevgo"}
+{"level":"INFO","time":"2025-01-20T17:42:32.918+0700","caller":"initialize/redis.go:48","msg":"value score is::","score":"100"}

@@ -1,8 +1,9 @@
-package utils
+package context
 
 import (
 	"context"
 	"errors"
+	"log"
 
 	"github.com/twinbeard/goLearning/internal/utils/cache"
 )
@@ -24,6 +25,7 @@ func GetSubjectUUID(ctx context.Context) (string, error) {
 
 func GetUserIdFromUUID(ctx context.Context) (uint64, error) {
 	SUUID, err := GetSubjectUUID(ctx)
+	log.Println("UUID: ", SUUID)
 	if err != nil {
 		return 0, err
 	}

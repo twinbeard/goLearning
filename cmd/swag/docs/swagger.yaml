@@ -25,6 +25,13 @@ definitions:
       user_id:
         type: integer
     type: object
+  models.TwoFactorVerificationInput:
+    properties:
+      two_factor_code_string:
+        type: string
+      user_id:
+        type: integer
+    type: object
   models.UpdatePasswordRegisterInput:
     properties:
       user_password:
@@ -156,11 +163,42 @@ paths:
       summary: User Set Up Two Factor Authentication
       tags:
       - account two-factor authentication
+  /user/two-factor/verify:
+    post:
+      consumes:
+      - application/json
+      description: User Verify Two Factor Authentication
+      parameters:
+      - description: Authorization token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/models.TwoFactorVerificationInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.ResponseData'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrorResponseData'
+      summary: User Verify Two Factor Authentication
+      tags:
+      - account two-factor authentication
   /user/update_pass_register:
     post:
       consumes:
       - application/json
-      description: Update Password Register
+      description: Update Password From Register
       parameters:
       - description: payload
         in: body
@@ -179,7 +217,7 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/response.ErrorResponseData'
-      summary: Update Password Register
+      summary: Update Password From Register
       tags:
       - account management
   /user/verify_account:

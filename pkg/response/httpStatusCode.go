@@ -13,7 +13,8 @@ const (
 	//User authentication
 	ErrCodeAuthFailed = 40005
 	// Two-factor-authentication
-	ErrCodeTwoFactorAuthSetupFailed = 80001
+	ErrCodeTwoFactorAuthSetupFailed  = 80001
+	ErrCodeTwoFactorAuthVerifyFailed = 80002
 )
 
 // message
@@ -29,5 +30,6 @@ var msg = map[int]string{
 	ErrCodeUserOtpNotExists: "User OTP not exists",
 	ErrCodeAuthFailed:       "User authentication failed",
 	// Two-factor-authentication
-	ErrCodeTwoFactorAuthSetupFailed: "Two-factor-authentication setup failed",
+	ErrCodeTwoFactorAuthSetupFailed:  "Two-factor-authentication setup failed",
+	ErrCodeTwoFactorAuthVerifyFailed: "Two-factor-authentication verify failed",
 }

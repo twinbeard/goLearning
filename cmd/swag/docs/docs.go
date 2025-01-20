@@ -151,9 +151,56 @@ const docTemplate = `{
                 }
             }
         },
+        "/user/two-factor/verify": {
+            "post": {
+                "description": "User Verify Two Factor Authentication",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "account two-factor authentication"
+                ],
+                "summary": "User Verify Two Factor Authentication",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Authorization token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "payload",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.TwoFactorVerificationInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.ResponseData"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrorResponseData"
+                        }
+                    }
+                }
+            }
+        },
         "/user/update_pass_register": {
             "post": {
-                "description": "Update Password Register",
+                "description": "Update Password From Register",
                 "consumes": [
                     "application/json"
                 ],
@@ -163,7 +210,7 @@ const docTemplate = `{
                 "tags": [
                     "account management"
                 ],
-                "summary": "Update Password Register",
+                "summary": "Update Password From Register",
                 "parameters": [
                     {
                         "description": "payload",
@@ -265,6 +312,17 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "two_factor_email": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.TwoFactorVerificationInput": {
+            "type": "object",
+            "properties": {
+                "two_factor_code_string": {
                     "type": "string"
                 },
                 "user_id": {
