@@ -9,9 +9,15 @@ import (
 	"go.uber.org/zap"
 )
 
+/*
+Mục tiệu của controller là để nhận input từ client, gọi service để xử lý logic.
+Controller sẽ save input in model
+*/
+
+// -------
 type cUserLogin struct{}
 
-// Login is a instance of cUserLogin
+// Create instance of cUserLogin named "Login"
 var Login = new(cUserLogin)
 
 // User Login
@@ -40,7 +46,7 @@ func (c *cUserLogin) Login(ctx *gin.Context) {
 	response.SuccessResponse(ctx, codeResult, dataRs)
 }
 
-// User Registration documentation
+// User Registration
 // @Summary      User Registration
 // @Description  When user is registered, send OTP to user's email
 // @Tags         account management
@@ -52,11 +58,13 @@ func (c *cUserLogin) Login(ctx *gin.Context) {
 // @Router       /user/register     [post]
 func (c *cUserLogin) Register(ctx *gin.Context) {
 	var params models.RegisterInput
+	// Bind input from client to models (struct) where we save input
 	if err := ctx.ShouldBindJSON(&params); err != nil {
 
 		response.ErrorResponse(ctx, response.ErrCodeParamsInvald, err.Error())
 		return
 	}
+	// -> Call service to handle logic
 	codeStatus, err := service.UserLogin().Register(ctx, &params)
 	if err != nil {
 		global.Logger.Error("Error registering user OTP : ", zap.Error(err))
@@ -91,9 +99,9 @@ func (c *cUserLogin) VerifyOTP(ctx *gin.Context) {
 	response.SuccessResponse(ctx, response.ErrCodeSuccess, result)
 }
 
-// Update Password Register
-// @Summary      Update Password Register
-// @Description  Update Password Register
+// Update Password From Register
+// @Summary      Update Password From Register
+// @Description  Update Password From Register
 // @Tags         account management
 // @Accept       json
 // @Produce      json

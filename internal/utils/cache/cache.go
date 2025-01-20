@@ -20,7 +20,7 @@ func GetCache(ctx context.Context, key string, obj interface{}) error {
 
 	// convert rs json to object
 	if err := json.Unmarshal([]byte(rs), obj); err != nil {
-		return fmt.Errorf("failed to unmarshal")
+		return fmt.Errorf("failed to unmarshasl")
 	}
 
 	return nil

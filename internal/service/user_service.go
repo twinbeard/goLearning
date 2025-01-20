@@ -16,12 +16,17 @@ type (
 		Register(ctx context.Context, in *models.RegisterInput) (codeResult int, err error)
 		VerifyOTP(ctx context.Context, in *models.VerifyInput) (out models.VerifyOTPOutput, err error)
 		UpdatePasswordRegister(ctx context.Context, token string, password string) (useId int, err error)
-		// two-factor authentication
+		// --- Two Factor Authentication ---
+
+		//1.  two-factor authentication
 		IsTwoFactorEnabled(ctx context.Context, userId int) (codeResult int, rs bool, err error)
-		// setup authentication
+		//2. setup authentication
 		SetupTwoFactorAuth(ctx context.Context, in *models.SetupTwoFactorAuthInput) (codeResult int, err error)
-		// Verify Two Factor Authentication
+		//2. Verify Two Factor Authentication
 		VerifyTwoFactorAuth(ctx context.Context, in *models.TwoFactorVerificationInput) (codeResult int, err error)
+
+		// --- END Two Factor Authentication ---
+
 	}
 
 	IUserInfo interface {
@@ -35,6 +40,7 @@ type (
 	}
 )
 
+// Declare global variable for interface
 var (
 	localUserAdmin IUserAdmin
 	localUserInfo  IUserInfo
@@ -60,6 +66,7 @@ func UserInfo() IUserInfo {
 func InitUserInfo(i IUserInfo) {
 	localUserInfo = i
 }
+
 func UserLogin() IUserLogin {
 	if localUserLogin == nil {
 		panic("implement localUserLogin not found for interface IUserLogin")

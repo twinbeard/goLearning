@@ -12,19 +12,23 @@ type UserRouter struct{}
 
 func (pr *UserRouter) InitUserRouter(Router *gin.RouterGroup) {
 	fmt.Println("Init User Router")
-	// public router
-	/* Non-dependency injection
+	//* public router
+
+	/* Có 3 cách để triển khải mô hình
 	Non-dependency => Có nghĩa là nếu có các function phụ thuộc vào nhau mà chúng ta không group lại thì sau này khi codespace nhiều lên
 	Dependency => Có nghĩa là group các hàm phụ thuộc vào nhau lại
 	sẽ khó sửa nên bây giờ chúng ta sẽ dùng PACKAGE wire đến group các hàm phụ thuộc vào nhau rồi sau này chỉ cần gọi 1 hàm là được
 	install wire: go get github.com/google/wire/cmd/wire
-	ur := repo.NewUserRepository()
-	us := service.NewUserService(ur)
-	userController:= controller.NewUserController(us)
-	userRouterPublic := Router.Group("/user", userHandlerNonDependency.Register)
+	- Level 1: Non-dependency injection (DI) -
+		ur := repo.NewUserRepository()
+		us := service.NewUserService(ur)
+		userController:= controller.NewUserController(us)
+		userRouterPublic.POST("/register", userController.Register)
+	- Level 2: Dependency injection (DI) => Dùng package WIRE để kết nối các dependency lại với nhau như là: wire (us,ur, userController) lại với thành một controller function để dùng
+		userController, _ := wire.InitUserRouterHandler()
+		userRouterPublic.POST("/register", userController.Register)
 	*/
-	//* Dependency injection (DI) => Dùng package WIRE để inject dependency
-	// userController, _ := wire.InitUserRouterHandler()
+	//- Level 3: Dùng interface -> Ích lợi là tốt trong việc làm việc nhóm
 	userRouterPublic := Router.Group("/user")
 	{
 		// userRouterPublic.POST("/register", userController.Register)
@@ -35,11 +39,11 @@ func (pr *UserRouter) InitUserRouter(Router *gin.RouterGroup) {
 		userRouterPublic.POST("/login", account.Login.Login) // Dùng cách  viết interface mới
 	}
 
-	// private router
+	//* private router
 	userRouterPrivate := Router.Group("/user")
 	// use middleware on private router (/user/...)
 	userRouterPrivate.Use(
-		// Creates a gin router instance with default middleware: logger and recovery (crash-free) middleware
+		//- Creates a gin router instance with default middleware: logger and recovery (crash-free) middleware
 		middlewares.AuthenMiddleware(),
 	// middlewares.Limiter(), // Limit request
 	// middlewares.Authentication(), // Check user's token
