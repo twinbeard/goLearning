@@ -1,5 +1,6 @@
 package consts
 
+// This code snippet is defining a set of constants in Go language.
 const (
 	EMAIL  int = 1
 	MOBILE int = 2
