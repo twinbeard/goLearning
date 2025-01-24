@@ -15,7 +15,7 @@
         },
         "version": "1.0.0"
     },
-    "host": "localhost:8008",
+    "host": "localhost:8002",
     "basePath": "/v1/2024",
     "paths": {
         "/user/login": {

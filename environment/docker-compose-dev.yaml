@@ -1,0 +1,148 @@
+version: '3.9'
+
+networks:
+  pre-go-local-network:
+    driver: bridge
+
+services:
+  # crm.show.com:
+  #   container_name: go_backend_crm_shopdev
+  #   build:
+  #     context: . # use the Dockerfile in the current directory
+  #     dockerfile: Dockerfile 
+  #   ports: 
+  #     - "8002:8008"
+  #   depends_on:
+  #     - mysql
+  #     - redis
+  #   restart: always
+  #   networks:
+  #     - pre-go-local-network
+
+  mysql:
+    image: mysql:8.0
+    container_name: mysql_container
+    environment:
+      MYSQL_ROOT_PASSWORD: root1234
+      MYSQL_DATABASE: shopdevgo
+      MYSQL_USER: root1
+      MYSQL_PASSWORD: root1234
+    ports:
+      - "33306:3306"
+    volumes:
+      - ./data/mysql_data:/var/lib/mysql # Hiện tại file docker-compose-dev.yaml đang ở thư mục tên environemnt nên khi mình start docker nó sẽ tao trong thứ mục environment một folder data
+      #- ./init:/docker-entrypoint-initdb.d # Đây là thư mục chứa file sql để khởi tạo database. (chưa dùng cái này nhé )
+    networks:
+      - pre-go-local-network
+
+  redis:
+    image: redis:7.0
+    container_name: redis_container
+    ports:
+      - "6381:6379"
+    volumes:
+      - ./data/redis_data:/data #Đây là thư mục chứa dữ liệu của redis trong working directory 
+      # Khi mình start docker nó sẽ tạo ra một folder data/redis_data trong working directory
+      # Khi redis container bị destroyed thì dữ liệu vẫn còn ở trong folder data/redis_data này và khi start lại redis container thì nó sẽ lấy dữ liệu từ folder này
+    networks:
+      - pre-go-local-network
+  
+  # kafka:
+  #   image: 'bitnami/kafka:3.5'
+  #   container_name: kafka_container
+  #   environment:
+  ## General configuration
+  #     KAFKA_ENABLE_KRAFT: yes
+  #     KAFKA_CFG_NODE_ID: 1
+  #     KAFKA_CFG_PROCESS_ROLES: controller,broker
+  ## Define kafka server side socket listening ports => Plaintext la mang giao tiep trong docker
+  #     KAFKA_CFG_LISTENERS: PLAINTEXT://:9094,CONTROLLER://:9095
+  ## Define the hostname and port the broker will advertise to producers and consumers
+  #     KAFKA_CFG_ADVERTISED_LISTENERS: PLAINTEXT://192.168.1.115:19094
+  ## Define the security protocol used on the listener
+  #     KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+  #     KAFKA_CFG_CONTROLLER_QUORUM_VOTERS: 1@pre_kafka_container:9093
+  #     KAFKA_CFG_CONTROLLER_LISTENER_NAMES: CONTROLLER
+  #     KAFKA_HEAP_OPTS: -Xmx512M -Xms256M
+  #     KAFKA_KRAFT_CLUSTER_ID: aF3+zO7$wT1~yY1?cC7,qW
+  #     ALLOW_PLAINTEXT_LISTENER: yes
+  #     KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE: true
+  #     KAFKA_BROKER_ID: 1
+  #   ports:
+  #     - "19094:9094"
+  #     - "19095:9095"
+  #   volumes:
+  #     - ./kafka/broker1:/bitnami/kafka:rw
+
+  # kafka-ui:
+  #   image: provectuslabs/kafka-ui:latest
+  #   container_name: kafka-ui_container
+  #   environment:
+  #     KAFKA_CLUSTERS_0_NAME: local
+  #     KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka_container:9094
+  #   ports:
+  #     - "9090:8080"
+  #   depends_on:
+  #     - kafka
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: pre-event-prometheus
+    restart: unless-stopped
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml # ghi đúng file là yml or yaml sao cho cũng khớp với file tương ứng trong working directory luôn nhé.Otherwise 0, thì nó không chạy đâu
+      - ./data/prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--web.enable-lifecycle'
+    extra_hosts:
+      - host.docker.internal:host-gateway
+    ports:
+      - "9092:9090"
+    networks:
+      - pre-go-local-network
+      
+  grafana:
+    image: grafana/grafana
+    container_name: pre-event-grafana
+    hostname: grafana
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_USERS_ALLOW_SIGN_UP=false
+      - GF_SERVER_DOMAIN=localhost
+      #enable logger
+      - GF_LOG_MODE=console file
+      - GF_LOG_FILTERS=alerting.notifier.slack:debug alermanager:debug ngalert:debug
+    volumes:
+      - ./grafana-storage:/var/lib/grafana
+    ports:
+      - "3002:3000"
+    networks:
+      - pre-go-local-network
+
+  node-exporter: # Monitor CPU,..
+    image: prom/node-exporter:latest
+    container_name: pre-event-node-exporter
+    restart: unless-stopped
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command:
+      - --path.procfs=/host/proc
+      - --path.rootfs=/rootfs
+      - --path.sysfs=/host/sys
+      - --collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($|/)$
+    ports:
+      - "9100:9100"
+    networks:
+      - pre-go-local-network
+
+
+# 3002:3000: 
+# 3002 is the port on the host machine.
+# 3000 is the port inside the Docker container.
+# This means that when you access localhost:3002 on your host machine, it will be forwarded to port 3000 inside the container.  

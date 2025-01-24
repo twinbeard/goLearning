@@ -1,4 +1,4 @@
-@baseURL = http://localhost:8008/v1/2024
+@baseURL = http://localhost:8002/v1/2024
 
 POST {{baseURL}}/user/register
 Content-Type: application/json

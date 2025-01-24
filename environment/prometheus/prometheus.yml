@@ -1,0 +1,34 @@
+global: # Cấu hình global cho prometheus
+  scrape_interval: 15s # Định kỳ 15s scrape data từ các target mỗi
+
+## host.docker.internal là một địa chỉ đặc biệt của docker, nó cho phép các container trong cùng một network có thể truy cập vào nhau thông qua địa chỉ này
+
+scrape_configs:
+  - job_name: "shopdev go prometheus" # Prometheus sẽ lấy metrics của bản thân nó
+    scrape_interval: 5s # Định kỳ 5s scrape data từ các target
+    static_configs:
+      - targets: ["host.docker.internal:9092"] # Đây là địa chỉ của prometheus trong docker-compose.yml
+    metrics_path: "/metrics" # Đây là api endPoint mà prometheus sẽ lấy metrics từ đó
+
+  - job_name: "shopdev go api" # Prometheus sẽ lấy metrics của golang app
+    scrape_interval: 5s
+    static_configs:
+      - targets: ["host.docker.internal:8002"] # Đây là địa chỉ của golang app trong docker-compose.yml during production or r.run(":8002") during development
+
+  - job_name: "ecommerce node exporter" # Prometheus sẽ lấy metrics của CPU
+    scrape_interval: 5s
+    static_configs:
+      - targets: ["host.docker.internal:9100"] # Cái này không cần metric path nhé
+
+##! Chưa add 2 cái này vào docker-compose-dev.yml
+# - job_name: "ecommerce mysql exporter" # Prometheus sẽ lấy metrics của mysql
+#   scrape_interval: 5s
+#   static_configs:
+#     - targets: ["host.docker.internal:9104"]
+#   metrics_path: "/metrics"
+
+# - job_name: "ecommerce redis exporter" # Prometheus sẽ lấy metrics của golang app
+#   scrape_interval: 5s
+#   static_configs:
+#     - targets: ["host.docker.internal:9121"]
+#   metrics_path: "/metrics"

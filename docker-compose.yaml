@@ -1,5 +1,6 @@
 version: '3.9'
 
+
 services:
   # crm.show.com:
   #   container_name: go_backend_crm_shopdev
@@ -7,7 +8,7 @@ services:
   #     context: . # use the Dockerfile in the current directory
   #     dockerfile: Dockerfile 
   #   ports: 
-  #     - "8008:8008"
+  #     - "8002:8008"
   #   depends_on:
   #     - mysql
   #     - redis
@@ -26,10 +27,9 @@ services:
     ports:
       - "33306:3306"
     volumes:
-      - mysql_data:/var/lib/mysql
-      - ./init:/docker-entrypoint-initdb.d
-    networks:
-      - app-network
+      - mysql_data:/var/lib/mysql # Hiện tại file docker-compose-dev.yaml đang ở thư mục tên environemnt nên khi mình start docker nó sẽ tao trong thứ mục environment một folder data
+      #- ./init:/docker-entrypoint-initdb.d # Đây là thư mục chứa file sql để khởi tạo database. (chưa dùng cái này nhé )
+    
 
   redis:
     image: redis:7.0
@@ -38,39 +38,45 @@ services:
       - "6381:6379"
     volumes:
       - redis_data:/data
-    networks:
-      - app-network
+    
   
-  kafka:
-    image: apache/kafka:latest
-    ports:
-      - 9092:9092
-    links:
-      - zookeeper
-    environment:
-      - ZOOKEEPER_CONNECT=zookeeper:2181
+  # kafka:
+  #   image: 'bitnami/kafka:3.5'
+  #   container_name: kafka_container
+  #   environment:
+  #     KAFKA_ENABLE_KRAFT: yes
+  #     KAFKA_CFG_NODE_ID: 1
+  #     KAFKA_CFG_PROCESS_ROLES: controller,broker
+  #     KAFKA_CFG_LISTENERS: PLAINTEXT://:9094,CONTROLLER://:9095
+  #     KAFKA_CFG_ADVERTISED_LISTENERS: PLAINTEXT://192.168.1.115:19094
+  #     KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+  #     KAFKA_CFG_CONTROLLER_QUORUM_VOTERS: 1@pre_kafka_container:9093
+  #     KAFKA_CFG_CONTROLLER_LISTENER_NAMES: CONTROLLER
+  #     KAFKA_HEAP_OPTS: -Xmx512M -Xms256M
+  #     KAFKA_KRAFT_CLUSTER_ID: aF3+zO7$wT1~yY1?cC7,qW
+  #     ALLOW_PLAINTEXT_LISTENER: yes
+  #     KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE: true
+  #     KAFKA_BROKER_ID: 1
+  #   ports:
+  #     - "19094:9094"
+  #     - "19095:9095"
+  #   volumes:
+  #     - ./kafka/broker1:/bitnami/kafka:rw
 
-  kafka-ui:
-    image: provectuslabs/kafka-ui:latest
-    container_name: demo_kafka-ui
-    environment:
-      - KAFKA_CLUSTERS_0_NAME=local
-      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=demo_kafka:9092
-    ports:
-      - 9089:8080
-    links:
-      - kafka
+  # kafka-ui:
+  #   image: provectuslabs/kafka-ui:latest
+  #   container_name: kafka-ui_container
+  #   environment:
+  #     KAFKA_CLUSTERS_0_NAME: local
+  #     KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka_container:9094
+  #   ports:
+  #     - "9090:8080"
+  #   depends_on:
+  #     - kafka
 
-  zookeeper:
-    image: quay.io/debezium/zookeeper:2.7
-    container_name: member_zookeeper_container
-    ports:
-      - 2181:2181
-      - 2888:2888
-      - 3888:3888
+    
+
+
 volumes:
   mysql_data:
   redis_data:
-networks:
-  app-network:
-    driver: bridge

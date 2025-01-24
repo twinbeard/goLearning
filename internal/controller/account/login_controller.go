@@ -33,6 +33,7 @@ var Login = new(cUserLogin)
 func (c *cUserLogin) Login(ctx *gin.Context) {
 	// Implement logic for login
 	var params models.LoginInput
+
 	if err := ctx.ShouldBindJSON(&params); err != nil {
 		response.ErrorResponse(ctx, response.ErrCodeParamsInvald, err.Error())
 		return

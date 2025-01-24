@@ -1,0 +1,42 @@
+{
+  "$schema": "https://aka.ms/codetour-schema",
+  "title": "How to use interface ",
+  "steps": [
+    {
+      "file": "internal/service/user_service.go",
+      "description": "Declare User Login Interface => This is like a contract ",
+      "line": 14
+    },
+    {
+      "file": "internal/initialize/service.go",
+      "description": "Create the instance of a struct for implementing the interface",
+      "line": 14
+    },
+    {
+      "file": "internal/service/impl/user_login_impl.go",
+      "description": "This is struct to implement the interface\n\n",
+      "line": 28
+    },
+    {
+      "file": "internal/service/impl/user_login_impl.go",
+      "description": "Make sure all methods that belongs to User Login Struct = Số lượng Method mà bạn declare in the interface\n",
+      "line": 115
+    },
+    {
+      "file": "internal/initialize/service.go",
+      "description": "Assign struct that implement the Interface into the Interface\n",
+      "line": 15
+    },
+    {
+      "file": "internal/routers/user/user.router.go",
+      "description": "Implement the register service of the interface\n",
+      "line": 36
+    },
+    {
+      "file": "internal/controller/account/login_controller.go",
+      "description": "- service.UserLogin() => get the instance of the interface \n\n- Login()=> After getting the instance of the interface, we trigger the method inside of the interface",
+      "line": 41
+    }
+  ],
+  "ref": "main"
+}

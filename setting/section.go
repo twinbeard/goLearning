@@ -46,3 +46,9 @@ type JWTSetting struct {
 	API_SECRET_KEY      string `mapstructure:"API_SECRET_KEY"`
 	JWT_EXPIRATION      string `mapstructure:"JWT_EXPIRATION"`
 }
+
+// Prometheus Settings
+type PrometheusSetting struct {
+	Enabled bool   `mapstructure:"enabled"`
+	Path    string `mapstructure:"path"`
+}

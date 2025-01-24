@@ -23,7 +23,7 @@ import (
 	"github.com/twinbeard/goLearning/pkg/response"
 )
 
-// THIS IS FILE TO IMPLEMENT INTERFACE IUserLogin
+//IMPLEMENTING INTERFACE
 
 type sUserLogin struct {
 	// Implement the IUserLogin interface here

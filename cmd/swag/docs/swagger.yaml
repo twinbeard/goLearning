@@ -66,7 +66,7 @@ definitions:
 externalDocs:
   description: OpenAPI
   url: https://swagger.io/resources/open-api/
-host: localhost:8008
+host: localhost:8002
 info:
   contact:
     email: truongvu.work@gmail.com

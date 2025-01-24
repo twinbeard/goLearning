@@ -16,7 +16,7 @@ docker_stop:
 dev:         
 	go run ./cmd/$(APP_NAME)
 docker_up:          
-	docker compose up -d
+	docker compose -f environment/docker-compose-dev.yaml up
 
 ## create new default schema file for migration => goose —dir sql/schema create pre_go_crm_user_c sql 
 create_migration:

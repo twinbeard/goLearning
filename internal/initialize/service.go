@@ -10,6 +10,8 @@ import (
 func InitServiceInterface() {
 	// User service interface
 	queries := database.New(global.Mdbc)
-	service.InitUserLogin(impl.NewUserLoginImpl(queries))
+	// create
+	userLoginImplInstance := impl.NewUserLoginImpl(queries) // Create instance of a struct to implement interace (User Login Struct)
+	service.InitUserLogin(userLoginImplInstance)            // Assign instance of UserLoginImpl to UserLogin interface
 
 }

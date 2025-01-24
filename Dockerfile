@@ -29,9 +29,9 @@ COPY ./config /dist/config
 # Copy the config directory from the local host machine to the /dist/config directory in the container
 
 
-EXPOSE 8008
-# Expose the port 8008 => mở cổng 8008
-# Chúng ta sẽ sử dụng cổng này để truy cập vào ứng dụng của mình locahost:8008 và container khác cũng có thể interact với container này thông qua cổng 8008
+EXPOSE 8002
+# Expose the port 8002 => mở cổng 8002
+# Chúng ta sẽ sử dụng cổng này để truy cập vào ứng dụng của mình locahost:8002 và container khác cũng có thể interact với container này thông qua cổng 8008
 
 CMD ["/dist/main"]
 # Run the binary file => khi container được start thì file binary main sẽ được chạy

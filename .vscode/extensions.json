@@ -1,5 +1,6 @@
 {
-    "recommendations": [
-        "amazonwebservices.codewhisperer-for-command-line-companion"
-    ]
+  "recommendations": [
+    "amazonwebservices.codewhisperer-for-command-line-companion",
+    "cweijan.dbclient-jdbc"
+  ]
 }
